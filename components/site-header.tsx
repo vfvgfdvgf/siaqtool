@@ -8,7 +8,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTi
 const mainNav = [
   { href: "/tools", label: "الأدوات" },
   { href: "/tools/pdf", label: "PDF" },
-  { href: "/tools/office", label: "أوفيس" },
+  { href: "/tools/office", label: "أوفيس والبيانات" },
   { href: "/tools/image", label: "الصور" },
   { href: "/tools/convert", label: "التحويل" },
   { href: "/blog", label: "المدونة" },
@@ -41,7 +41,7 @@ export function SiteHeader() {
         </nav>
         <div className="apple-header-actions">
           <Link href="/tools" className="header-search" aria-label="البحث في الأدوات"><Search size={17} /></Link>
-          <Link href="/#tools" className="header-action">ابدأ <ArrowLeft size={14} /></Link>
+          <Link href="/tools" className="header-action">ابدأ <ArrowLeft size={14} /></Link>
           <Sheet>
             <SheetTrigger asChild><button className="apple-menu-trigger" type="button" aria-label="فتح قائمة الموقع"><Menu size={19} /></button></SheetTrigger>
             <SheetContent side="right" className="apple-nav-sheet">

@@ -1,11 +1,11 @@
 # سياق لتحويل الملفات
 
-مشروع عربي متكامل بواجهة **Next.js + React** وخدمة معالجة مستقلة بـ**Python Django**. يحتوي الكتالوج على 100 أداة لملفات PDF وWord وExcel وPowerPoint والصور، إضافة إلى مدونة ديناميكية ولوحة إدارة محمية.
+مشروع عربي متكامل بواجهة **Next.js + React** وخدمة معالجة مستقلة بـ**Python Django**. يحتوي الكتالوج على 146 أداة لملفات PDF وWord وExcel وPowerPoint والصور والبيانات، إضافة إلى مدونة ديناميكية ولوحة إدارة محمية.
 
 ## مكونات المشروع
 
 - `app/` و`components/`: واجهة Next.js المتجاوبة.
-- `lib/content.ts`: المصدر الموحد لبيانات الأدوات المئة.
+- `lib/content.ts`: المصدر الموحد لبيانات الأدوات الـ146.
 - `backend/`: واجهة Django ومعالجات PDF وOffice والصور.
 - `backend/blog/`: المقالات، واجهة القراءة، ولوحة الإدارة.
 - `render.yaml`: Blueprint ينشئ خدمتي الواجهة والمحرك على Render.
@@ -63,9 +63,12 @@ SIAQ_API_INTERNAL_URL=http://127.0.0.1:8000/api/v1 npm run dev
 ## الاختبارات
 
 ```bash
-npm run build:render
-cd backend && python manage.py test
+npm run lint
+npm run build
+cd backend && python -m unittest -v tests.test_processors
 ```
+
+تشمل النسخة الحالية 145 مسار معالجة يعمل فعليًا، مع أداة ترجمة واحدة مخطط لها، وخريطة موقع وروبوتات وبيانات منظمة لتحسين الظهور في محركات البحث.
 
 ## الأمان
 

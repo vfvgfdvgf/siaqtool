@@ -8,7 +8,7 @@ from pathlib import Path
 
 import cairosvg
 import pillow_heif
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 
 from .core import ProcessResult, ProcessingError, file_result, run
 
@@ -33,6 +33,21 @@ TARGET_FORMATS = {
     "avif-to-jpg": ("JPEG", ".jpg"),
     "png-to-ico": ("ICO", ".ico"),
     "jpg-to-ico": ("ICO", ".ico"),
+    "png-to-bmp": ("BMP", ".bmp"),
+    "bmp-to-png": ("PNG", ".png"),
+    "tiff-to-png": ("PNG", ".png"),
+    "gif-to-png": ("PNG", ".png"),
+    "avif-to-png": ("PNG", ".png"),
+    "ico-to-png": ("PNG", ".png"),
+    "heic-to-webp": ("WEBP", ".webp"),
+}
+
+TRANSFORM_TOOLS = {
+    "compress-image", "resize-image", "crop-image", "rotate-image", "flip-image",
+    "grayscale-image", "blur-image", "sharpen-image", "watermark-image",
+    "remove-image-metadata", "invert-image", "sepia-image", "auto-contrast-image",
+    "equalize-image", "brightness-image", "contrast-image", "posterize-image",
+    "image-border", "square-image",
 }
 
 
@@ -137,7 +152,32 @@ def process_images(paths: list[Path], workdir: Path, options: dict, slug: str) -
             image = Image.alpha_composite(image, overlay)
         elif slug == "remove-image-metadata":
             image = image.copy()
-        if slug in {"compress-image", "resize-image", "crop-image", "rotate-image", "flip-image", "grayscale-image", "blur-image", "sharpen-image", "watermark-image", "remove-image-metadata"}:
+        elif slug == "invert-image":
+            image = ImageOps.invert(_flatten(image))
+        elif slug == "sepia-image":
+            image = ImageOps.colorize(ImageOps.grayscale(image), "#2b1b12", "#f3d8ad")
+        elif slug == "auto-contrast-image":
+            image = ImageOps.autocontrast(_flatten(image), cutoff=1)
+        elif slug == "equalize-image":
+            image = ImageOps.equalize(_flatten(image))
+        elif slug == "brightness-image":
+            image = ImageEnhance.Brightness(image).enhance(max(.2, min(float(options.get("strength", 1.15)), 3)))
+        elif slug == "contrast-image":
+            image = ImageEnhance.Contrast(image).enhance(max(.2, min(float(options.get("strength", 1.2)), 3)))
+        elif slug == "posterize-image":
+            image = ImageOps.posterize(_flatten(image), max(2, min(int(options.get("bits", 4)), 7)))
+        elif slug == "image-border":
+            border = max(2, min(int(options.get("border", 24)), 240))
+            image = ImageOps.expand(_flatten(image), border=border, fill="white")
+        elif slug == "square-image":
+            side = max(image.size)
+            square = Image.new("RGB", (side, side), "white")
+            flattened = _flatten(image)
+            square.paste(flattened, ((side - flattened.width) // 2, (side - flattened.height) // 2))
+            image.close()
+            flattened.close()
+            image = square
+        if slug in TRANSFORM_TOOLS:
             format_name = "PNG" if image.mode in {"RGBA", "LA"} else "JPEG"
             extension = ".png" if format_name == "PNG" else ".jpg"
         output = workdir / f"image-{index}{extension}"
@@ -172,9 +212,46 @@ def ocr_image(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult
     return file_result(output, "siaq-image-text.txt", "text/plain; charset=utf-8")
 
 
+def image_palette(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    source = _open(paths[0])
+    image = source.convert("RGB")
+    source.close()
+    image.thumbnail((360, 360), Image.Resampling.LANCZOS)
+    quantized = image.quantize(colors=8)
+    colors = sorted(quantized.getcolors() or [], reverse=True)
+    palette = quantized.getpalette() or []
+    total = max(1, sum(count for count, _ in colors))
+    payload = []
+    for count, index in colors:
+        red, green, blue = palette[index * 3:index * 3 + 3]
+        payload.append({"hex": f"#{red:02x}{green:02x}{blue:02x}", "share": round(count / total * 100, 2)})
+    image.close()
+    quantized.close()
+    output = workdir / "image-palette.json"
+    output.write_text(json.dumps({"colors": payload}, ensure_ascii=False, indent=2), encoding="utf-8")
+    return file_result(output, "siaq-image-palette.json", "application/json")
+
+
+def compare_images(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    if len(paths) < 2:
+        raise ProcessingError("المقارنة تحتاج صورتين على الأقل.")
+    first = _flatten(_open(paths[0]))
+    second_source = _flatten(_open(paths[1]))
+    second = ImageOps.fit(second_source, first.size, Image.Resampling.LANCZOS)
+    difference = ImageChops.difference(first, second)
+    difference = ImageEnhance.Contrast(difference).enhance(2.5)
+    output = workdir / "image-difference.png"
+    difference.save(output, "PNG", optimize=True)
+    first.close(); second_source.close(); second.close(); difference.close()
+    return file_result(output, "siaq-image-difference.png", "image/png")
+
+
 IMAGE_PROCESSORS = {slug: (lambda p, w, o, tool_slug=slug: process_images(p, w, o, tool_slug)) for slug in [
-    "compress-image", "resize-image", "crop-image", "rotate-image", "flip-image",
-    "grayscale-image", "blur-image", "sharpen-image", "watermark-image",
-    "remove-image-metadata", *TARGET_FORMATS.keys(), "svg-to-png", "svg-to-jpg",
+    *TRANSFORM_TOOLS, *TARGET_FORMATS.keys(), "svg-to-png", "svg-to-jpg",
 ]}
-IMAGE_PROCESSORS.update({"image-metadata": image_metadata, "image-to-text": ocr_image})
+IMAGE_PROCESSORS.update({
+    "image-metadata": image_metadata,
+    "image-to-text": ocr_image,
+    "image-palette": image_palette,
+    "compare-images": compare_images,
+})

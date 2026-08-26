@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 import zipfile
+import json
 from pathlib import Path
 
 from PIL import Image
@@ -42,7 +43,7 @@ class ProcessorTests(unittest.TestCase):
         self.assertEqual(len(PdfReader(result.path).pages), 1)
 
     def test_new_tool_catalog_is_wired(self):
-        self.assertEqual(len(SUPPORTED_TOOLS), 99)
+        self.assertEqual(len(SUPPORTED_TOOLS), 145)
         self.assertEqual(SUPPORTED_TOOLS, frozenset(ALLOWED_EXTENSIONS))
 
     def test_delete_pdf_page(self):
@@ -68,5 +69,24 @@ class ProcessorTests(unittest.TestCase):
         result = process("png-to-jpg", [source], {}, self.root)
         with Image.open(result.path) as converted:
             self.assertEqual(converted.format, "JPEG")
+
+    def test_pdf_info(self):
+        result = process("pdf-info", [self.pdf("source.pdf", 2)], {}, self.root)
+        payload = json.loads(result.path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["pages"], 2)
+
+    def test_csv_to_json(self):
+        source = self.root / "source.csv"
+        source.write_text("name,value\nSiaq,146\n", encoding="utf-8")
+        result = process("csv-to-json", [source], {}, self.root)
+        payload = json.loads(result.path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["rows"][0]["name"], "Siaq")
+
+    def test_image_palette(self):
+        source = self.root / "palette.png"
+        Image.new("RGB", (20, 20), "#d9232e").save(source)
+        result = process("image-palette", [source], {}, self.root)
+        payload = json.loads(result.path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["colors"][0]["hex"], "#d9232e")
 
 if __name__ == "__main__": unittest.main()

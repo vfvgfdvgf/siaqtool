@@ -28,6 +28,8 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
   const [pages, setPages] = useState("1");
   const [size, setSize] = useState("1600");
   const [margin, setMargin] = useState("12");
+  const [strength, setStrength] = useState("1.2");
+  const [rows, setRows] = useState("500");
 
   useEffect(() => () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl); }, [downloadUrl]);
 
@@ -62,6 +64,9 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
     if (toolSlug === "resize-image") return { size: Number(size) };
     if (toolSlug === "crop-pdf") return { margin: Number(margin) };
     if (toolSlug === "crop-image") return { crop: Number(margin) };
+    if (toolSlug === "add-page-border" || toolSlug === "image-border") return { margin: Number(margin), border: Number(margin) };
+    if (["brightness-image", "contrast-image"].includes(toolSlug)) return { strength: Number(strength) };
+    if (toolSlug === "split-csv") return { rows: Number(rows) };
     return {};
   }
 
@@ -96,7 +101,8 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
     "protect-pdf", "unlock-pdf", "watermark", "watermark-image", "edit-pdf", "sign-pdf",
     "add-header-footer", "stamp-pdf", "rotate-pdf", "rotate-image", "compress-pdf",
     "delete-pdf-pages", "extract-pdf-pages", "duplicate-pdf-pages", "organize-pdf",
-    "reorder-pdf-pages", "resize-image", "crop-pdf", "crop-image",
+    "reorder-pdf-pages", "resize-image", "crop-pdf", "crop-image", "add-page-border",
+    "image-border", "brightness-image", "contrast-image", "split-csv",
   ].includes(toolSlug);
 
   return (
@@ -130,6 +136,9 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
             {["delete-pdf-pages", "extract-pdf-pages", "duplicate-pdf-pages", "organize-pdf", "reorder-pdf-pages"].includes(toolSlug) && <label><span>{toolSlug.includes("order") || toolSlug === "organize-pdf" ? "ترتيب الصفحات" : "أرقام الصفحات"}</span><input type="text" dir="ltr" value={pages} onChange={(event) => setPages(event.target.value)} placeholder="1, 3-5" /></label>}
             {toolSlug === "resize-image" && <label><span>أكبر ضلع بالبكسل</span><input type="number" min="320" max="6000" value={size} onChange={(event) => setSize(event.target.value)} /></label>}
             {(toolSlug === "crop-pdf" || toolSlug === "crop-image") && <label><span>{toolSlug === "crop-pdf" ? "الهامش بالنقاط" : "نسبة القص من الحواف"}</span><input type="number" min="0" max={toolSlug === "crop-pdf" ? "72" : "40"} value={margin} onChange={(event) => setMargin(event.target.value)} /></label>}
+            {(toolSlug === "add-page-border" || toolSlug === "image-border") && <label><span>{toolSlug === "add-page-border" ? "هامش الإطار" : "عرض الإطار بالبكسل"}</span><input type="number" min="2" max={toolSlug === "add-page-border" ? "72" : "240"} value={margin} onChange={(event) => setMargin(event.target.value)} /></label>}
+            {["brightness-image", "contrast-image"].includes(toolSlug) && <label><span>قوة التأثير</span><input type="number" min="0.2" max="3" step="0.1" value={strength} onChange={(event) => setStrength(event.target.value)} /></label>}
+            {toolSlug === "split-csv" && <label><span>عدد الصفوف في كل ملف</span><input type="number" min="100" max="5000" step="100" value={rows} onChange={(event) => setRows(event.target.value)} /></label>}
             {(toolSlug === "rotate-pdf" || toolSlug === "rotate-image") && <fieldset><legend>زاوية التدوير</legend><RadioGroup value={angle} onValueChange={setAngle} className="option-radio">{["90", "180", "270"].map((value) => <label key={value}><RadioGroupItem value={value} />{value}°</label>)}</RadioGroup></fieldset>}
             {toolSlug === "compress-pdf" && <fieldset><legend>مستوى الضغط</legend><RadioGroup value={quality} onValueChange={setQuality} className="option-radio">{[["screen", "أعلى ضغط"], ["balanced", "متوازن"], ["print", "طباعة"]].map(([value, label]) => <label key={value}><RadioGroupItem value={value} />{label}</label>)}</RadioGroup></fieldset>}
           </div>}

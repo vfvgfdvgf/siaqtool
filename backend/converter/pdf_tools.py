@@ -325,6 +325,179 @@ def summarize_pdf(paths: list[Path], workdir: Path, _options: dict) -> ProcessRe
     return file_result(output, "siaq-summary.txt", "text/plain; charset=utf-8")
 
 
+def extract_text_pdf(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    document = fitz.open(paths[0])
+    try:
+        pages = [f"الصفحة {index}\n{'-' * 24}\n{page.get_text('text').strip()}" for index, page in enumerate(document, start=1)]
+    finally:
+        document.close()
+    output = workdir / "pdf-text.txt"
+    output.write_text("\n\n".join(pages), encoding="utf-8")
+    return file_result(output, "siaq-pdf-text.txt", "text/plain; charset=utf-8")
+
+
+def pdf_info(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    reader = _reader(paths[0])
+    metadata = reader.metadata or {}
+    payload = {
+        "pages": len(reader.pages),
+        "encrypted": reader.is_encrypted,
+        "page_sizes": [
+            {"page": index, "width": round(float(page.mediabox.width), 2), "height": round(float(page.mediabox.height), 2)}
+            for index, page in enumerate(reader.pages, start=1)
+        ],
+        "metadata": {str(key).lstrip("/"): str(value) for key, value in metadata.items() if value is not None},
+    }
+    output = workdir / "pdf-info.json"
+    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return file_result(output, "siaq-pdf-info.json", "application/json")
+
+
+def pdf_to_json(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    document = fitz.open(paths[0])
+    try:
+        payload = {
+            "pages": [
+                {"number": index, "text": page.get_text("text").strip(), "width": page.rect.width, "height": page.rect.height}
+                for index, page in enumerate(document, start=1)
+            ]
+        }
+    finally:
+        document.close()
+    output = workdir / "pdf-pages.json"
+    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return file_result(output, "siaq-pdf-pages.json", "application/json")
+
+
+def extract_images_pdf(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    document = fitz.open(paths[0])
+    archive = workdir / "pdf-images.zip"
+    extracted = 0
+    try:
+        with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
+            seen: set[int] = set()
+            for page_number, page in enumerate(document, start=1):
+                for image_number, item in enumerate(page.get_images(full=True), start=1):
+                    xref = item[0]
+                    if xref in seen:
+                        continue
+                    seen.add(xref)
+                    data = document.extract_image(xref)
+                    extension = data.get("ext", "bin")
+                    extracted += 1
+                    bundle.writestr(f"page-{page_number}-image-{image_number}.{extension}", data["image"])
+    finally:
+        document.close()
+    if not extracted:
+        archive.unlink(missing_ok=True)
+        raise ProcessingError("لم نجد صورًا مضمنة داخل الملف.")
+    return file_result(archive, "siaq-pdf-images.zip", "application/zip")
+
+
+def select_pattern_pages(paths: list[Path], workdir: Path, _options: dict, mode: str) -> ProcessResult:
+    reader = _reader(paths[0])
+    if mode == "odd":
+        pages = [page for index, page in enumerate(reader.pages) if index % 2 == 0]
+    elif mode == "even":
+        pages = [page for index, page in enumerate(reader.pages) if index % 2 == 1]
+    elif mode == "first":
+        pages = [reader.pages[0]]
+    else:
+        pages = [reader.pages[-1]]
+    if not pages:
+        raise ProcessingError("لا توجد صفحات تطابق هذا الاختيار.")
+    output = workdir / f"{mode}-pages.pdf"
+    _write_pages(pages, output)
+    return pdf_result(output, f"siaq-{mode}-pages.pdf")
+
+
+def interleave_pdf(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    if len(paths) < 2:
+        raise ProcessingError("التداخل يحتاج ملفين على الأقل.")
+    readers = [_reader(path) for path in paths]
+    writer = PdfWriter()
+    for page_index in range(max(len(reader.pages) for reader in readers)):
+        for reader in readers:
+            if page_index < len(reader.pages):
+                writer.add_page(reader.pages[page_index])
+    output = workdir / "interleaved.pdf"
+    with output.open("wb") as target:
+        writer.write(target)
+    return pdf_result(output, "siaq-interleaved.pdf")
+
+
+def remove_blank_pages(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    document = fitz.open(paths[0])
+    reader = _reader(paths[0])
+    try:
+        keep = [
+            index for index, page in enumerate(document)
+            if page.get_text("text").strip() or page.get_images(full=True) or page.get_drawings()
+        ]
+    finally:
+        document.close()
+    if not keep:
+        raise ProcessingError("كل صفحات الملف تبدو فارغة.")
+    output = workdir / "without-blank-pages.pdf"
+    _write_pages([reader.pages[index] for index in keep], output)
+    return pdf_result(output, "siaq-without-blank-pages.pdf")
+
+
+def add_page_border(paths: list[Path], workdir: Path, options: dict) -> ProcessResult:
+    writer = PdfWriter()
+    inset = max(6.0, min(float(options.get("margin", 18)), 72.0))
+    for page in _reader(paths[0]).pages:
+        width, height = float(page.mediabox.width), float(page.mediabox.height)
+        layer_data = BytesIO()
+        layer = canvas.Canvas(layer_data, pagesize=(width, height))
+        layer.setStrokeColorRGB(.15, .15, .17)
+        layer.setLineWidth(1)
+        layer.rect(inset, inset, width - inset * 2, height - inset * 2)
+        layer.save()
+        layer_data.seek(0)
+        page.merge_page(PdfReader(layer_data).pages[0])
+        writer.add_page(page)
+    output = workdir / "bordered.pdf"
+    with output.open("wb") as target:
+        writer.write(target)
+    return pdf_result(output, "siaq-bordered.pdf")
+
+
+def resize_pdf_a4(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    source = fitz.open(paths[0])
+    target = fitz.open()
+    try:
+        for index, page in enumerate(source):
+            landscape = page.rect.width > page.rect.height
+            width, height = (842, 595) if landscape else (595, 842)
+            new_page = target.new_page(width=width, height=height)
+            available = fitz.Rect(24, 24, width - 24, height - 24)
+            new_page.show_pdf_page(available, source, index, keep_proportion=True)
+        output = workdir / "a4.pdf"
+        target.save(output, garbage=3, deflate=True)
+    finally:
+        target.close()
+        source.close()
+    return pdf_result(output, "siaq-a4.pdf")
+
+
+def two_up_pdf(paths: list[Path], workdir: Path, _options: dict) -> ProcessResult:
+    source = fitz.open(paths[0])
+    target = fitz.open()
+    try:
+        for start in range(0, source.page_count, 2):
+            page = target.new_page(width=842, height=595)
+            page.show_pdf_page(fitz.Rect(20, 20, 411, 575), source, start, keep_proportion=True)
+            if start + 1 < source.page_count:
+                page.show_pdf_page(fitz.Rect(431, 20, 822, 575), source, start + 1, keep_proportion=True)
+        output = workdir / "two-up.pdf"
+        target.save(output, garbage=3, deflate=True)
+    finally:
+        target.close()
+        source.close()
+    return pdf_result(output, "siaq-two-pages-per-sheet.pdf")
+
+
 PDF_PROCESSORS = {
     "merge-pdf": merge_pdf,
     "split-pdf": split_pdf,
@@ -355,4 +528,17 @@ PDF_PROCESSORS = {
     "stamp-pdf": lambda p, w, o: annotate_pdf(p, w, o, "stamp"),
     "compare-pdf": compare_pdf,
     "summarize-pdf": summarize_pdf,
+    "extract-text-pdf": extract_text_pdf,
+    "pdf-info": pdf_info,
+    "pdf-to-json": pdf_to_json,
+    "extract-images-pdf": extract_images_pdf,
+    "odd-pages-pdf": lambda p, w, o: select_pattern_pages(p, w, o, "odd"),
+    "even-pages-pdf": lambda p, w, o: select_pattern_pages(p, w, o, "even"),
+    "first-page-pdf": lambda p, w, o: select_pattern_pages(p, w, o, "first"),
+    "last-page-pdf": lambda p, w, o: select_pattern_pages(p, w, o, "last"),
+    "interleave-pdf": interleave_pdf,
+    "remove-blank-pages": remove_blank_pages,
+    "add-page-border": add_page_border,
+    "resize-pdf-a4": resize_pdf_a4,
+    "two-up-pdf": two_up_pdf,
 }

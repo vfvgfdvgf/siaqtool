@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
-  ArrowLeft, ArrowUpLeft, Check, Clock3, FileCheck2, Layers3, LockKeyhole,
-  MonitorSmartphone, ScanText, ShieldCheck, Sparkles, WandSparkles, Zap,
+  ArrowLeft, ArrowUpLeft, CheckCircle2, FileCheck2, Gauge, LockKeyhole,
+  MonitorSmartphone, ShieldCheck, Zap,
 } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -10,117 +10,112 @@ import { ToolGlyph } from "@/components/tool-glyph";
 import { categories, categoryDescriptions, categoryLabels, tools } from "@/lib/content";
 import { getPosts } from "@/lib/blog";
 
-const quickTools = ["merge-pdf", "compress-pdf", "pdf-to-word", "word-to-pdf", "compress-image", "image-to-text"]
+const quickTools = ["merge-pdf", "compress-pdf", "pdf-to-word", "word-to-pdf", "excel-to-word", "compress-image", "jpg-to-pdf", "image-to-text"]
   .map((slug) => tools.find((tool) => tool.slug === slug)!)
   .filter(Boolean);
 
+const faq = [
+  { question: "هل أحتاج إلى إنشاء حساب؟", answer: "لا. يمكنك اختيار الأداة ورفع الملف وبدء المعالجة مباشرة دون تسجيل." },
+  { question: "هل تُحفظ ملفاتي؟", answer: "تُستخدم الملفات أثناء المعالجة المؤقتة فقط ولا تُضاف إلى قاعدة بيانات أو مكتبة دائمة." },
+  { question: "هل تعمل الأدوات على الهاتف؟", answer: "نعم. صُممت مساحة الرفع والإعدادات والتنزيل لتعمل على الجوال والكمبيوتر." },
+];
+
 export default async function Home() {
   const articles = await getPosts(3);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        name: "سياق",
+        url: "https://getsiaq.com/",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web",
+        inLanguage: "ar",
+        description: `منصة عربية تضم ${tools.length} أداة لتحويل وضغط وتنظيم ملفات PDF وأوفيس والصور.`,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "SAR" },
+      },
+      {
+        "@type": "ItemList",
+        name: "أشهر أدوات سياق",
+        itemListElement: quickTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, url: `https://getsiaq.com/tool/${tool.slug}`, name: tool.title })),
+      },
+      { "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) },
+    ],
+  };
+
   return (
     <main>
       <SiteHeader />
 
-      <section className="home-hero shell" data-reveal>
-        <div className="home-hero-copy">
-          <span className="hero-kicker"><span>سياق</span> 100 أداة، تجربة عربية واحدة</span>
-          <h1>كل ما يحتاجه ملفك.<br /><em>أوضح. أسرع.</em></h1>
-          <p>حوّل، رتّب، اضغط واحمِ مستنداتك وصورك من مساحة واحدة مصممة لتوصلك إلى النتيجة بأقل عدد من الخطوات.</p>
-          <div className="hero-actions deep-actions">
-            <Link href="#tools" className="primary-button">اختر أداتك <ArrowLeft size={18} /></Link>
-            <Link href="/tool/merge-pdf" className="secondary-button">دمج PDF الآن</Link>
+      <section className="workspace-hero shell">
+        <div className="workspace-hero-main">
+          <span className="hero-kicker"><span>جديد</span> {tools.length} أداة جاهزة لملفاتك</span>
+          <h1>حوّل ملفك.<br /><em>وانتهِ أسرع.</em></h1>
+          <p>PDF وWord وExcel وPowerPoint والصور والبيانات؛ مساحة عربية واحدة توصلك إلى النتيجة بأقل عدد من الخطوات.</p>
+          <div className="workspace-hero-actions">
+            <Link href="#tools" className="primary-button">ابحث عن أداتك <ArrowLeft size={17} /></Link>
+            <Link href="/tool/merge-pdf" className="secondary-button">دمج PDF</Link>
           </div>
-          <div className="hero-proof"><span><Check size={15} /> بدون تسجيل</span><span><ShieldCheck size={15} /> معالجة مؤقتة</span><span><Zap size={15} /> متوافق مع الهاتف</span></div>
+          <div className="workspace-proof"><span><CheckCircle2 size={16} /> دون تسجيل</span><span><ShieldCheck size={16} /> معالجة مؤقتة</span><span><MonitorSmartphone size={16} /> هاتف وكمبيوتر</span></div>
         </div>
 
-        <div className="home-hero-visual">
-          <figure className="hero-image"><img src="/images/siaq-home-hero.webp" alt="ملفات وصور وجداول تمر في مسار تحويل منظم" fetchPriority="high" /></figure>
-          <div className="hero-quick-tools" aria-label="أدوات سريعة">
-            {quickTools.slice(0, 4).map((tool) => <Link href={`/tool/${tool.slug}`} key={tool.slug}><span><ToolGlyph slug={tool.slug} size={18} /></span><strong>{tool.title}</strong><ArrowUpLeft size={15} /></Link>)}
-          </div>
-          <div className="hero-format-dock" aria-label="الصيغ المدعومة"><span>PDF</span><span>Word</span><span>Excel</span><span>PowerPoint</span><span>JPG</span><strong>{tools.length} أداة</strong></div>
-        </div>
+        <aside className="instant-panel" aria-label="الأدوات الأكثر استخدامًا">
+          <header><div><span>ابدأ مباشرة</span><h2>الأكثر استخدامًا</h2></div><small><i /> تعمل الآن</small></header>
+          <div className="instant-tools">{quickTools.map((tool) => <Link href={`/tool/${tool.slug}`} key={tool.slug}><span><ToolGlyph slug={tool.slug} size={19} /></span><div><strong>{tool.title}</strong><small>{tool.accept.replaceAll(".", "").toUpperCase()}</small></div><ArrowUpLeft size={16} /></Link>)}</div>
+          <Link className="instant-all" href="/tools">استعرض كل الأدوات <ArrowLeft size={15} /></Link>
+        </aside>
       </section>
 
-      <div className="trust-strip deep-trust"><div className="shell"><span><LockKeyhole size={17} /> لا تخزين دائم</span><span><Clock3 size={17} /> خطوات أقصر</span><span><MonitorSmartphone size={17} /> يعمل على كل الشاشات</span><span><FileCheck2 size={17} /> نتيجة منفصلة</span></div></div>
+      <div className="format-ribbon"><div className="shell"><span>PDF</span><span>DOCX</span><span>XLSX</span><span>PPTX</span><span>JPG</span><span>PNG</span><span>WEBP</span><span>CSV</span><strong>+20 صيغة أخرى</strong></div></div>
 
-      <section className="tool-library-banner shell" data-reveal>
-        <figure><img src="/images/siaq-tool-library.webp" alt="مكتبة متصلة تضم وحدات للمستندات والصور والجداول" loading="lazy" decoding="async" /></figure>
-        <div><span className="eyebrow"><span className="eyebrow-line" /> ابدأ من المهمة</span><h2>مكتبة مرتبة،<br />لا قائمة مربكة.</h2><p>اكتب ما تريد فعله أو اختر نوع الملف، وستظهر لك الأدوات المناسبة فورًا.</p><div><span>6 أقسام</span><span>100 أداة</span><span>بحث فوري</span></div></div>
-      </section>
+      <ToolFinder limit={16} compact />
 
-      <ToolFinder limit={12} />
-
-      <section className="category-section shell" data-reveal>
-        <div className="section-head rich-head"><div><span className="eyebrow"><span className="eyebrow-line" /> حسب نوع المهمة</span><h2>لكل ملف،<br />مساحة مناسبة.</h2></div><p>كل قسم يجمع الأدوات المرتبطة في رحلة واضحة، مع أيقونة مخصصة تشرح وظيفة كل أداة من النظرة الأولى.</p></div>
-        <div className="category-grid">
-          {categories.map((category, index) => {
-            const categoryTools = tools.filter((tool) => tool.category === category);
-            return <Link href={`/tools/${category}`} className={`category-card category-${category}`} key={category}>
-              <div className="category-top"><span>0{index + 1}</span><ArrowUpLeft size={18} /></div>
-              <div className="category-art" aria-hidden="true">{categoryTools.slice(0, 3).map((tool) => <span key={tool.slug}><ToolGlyph slug={tool.slug} size={index === 0 ? 26 : 21} /></span>)}</div>
+      <section className="home-category-hub shell" aria-labelledby="category-title">
+        <div className="compact-section-head"><div><span className="eyebrow"><span className="eyebrow-line" /> تصفح حسب النوع</span><h2 id="category-title">ستة أقسام، دون تشتّت.</h2></div><p>كل أداة في مكان واضح، مع حالة التشغيل والصيغ المقبولة قبل رفع الملف.</p></div>
+        <div className="compact-category-grid">
+          {categories.map((category) => {
+            const items = tools.filter((tool) => tool.category === category);
+            return <Link href={`/tools/${category}`} className={`compact-category-card tone-${category}`} key={category}>
+              <div><span className="compact-category-icon"><ToolGlyph slug={items[0].slug} size={21} /></span><small>{items.length} أداة</small></div>
               <h3>{categoryLabels[category]}</h3><p>{categoryDescriptions[category]}</p>
-              <div className="category-samples">{categoryTools.slice(0, 3).map((tool) => <span key={tool.slug}>{tool.title}</span>)}</div>
-              <small>{categoryTools.length} أدوات</small>
+              <span className="category-inline-tools">{items.slice(0, 3).map((tool) => tool.title).join(" · ")}</span>
+              <ArrowUpLeft size={17} />
             </Link>;
           })}
         </div>
       </section>
 
-      <section className="experience-section" data-reveal>
-        <div className="shell experience-grid">
-          <div className="experience-copy"><span className="eyebrow light"><span className="eyebrow-line" /> من الملف إلى النتيجة</span><h2>ثلاث خطوات.<br />لا مفاجآت.</h2><p>اختر الملف، راجع الإعدادات الضرورية، ثم نزّل النتيجة. تظهر لك حالة كل خطوة بوضوح وتبقى الخيارات قريبة من المهمة.</p><Link href="/tools">استكشف الأدوات <ArrowLeft size={17} /></Link></div>
-          <div className="experience-visual">
-            <figure><img src="/images/siaq-three-stage-workflow.webp" alt="مسار معالجة للملفات من ثلاث مراحل منظمة" loading="lazy" decoding="async" /></figure>
-            <div className="workflow-board">
-              <div><span className="workflow-number">01</span><FileCheck2 size={22} /><strong>تحقق من الملف</strong></div>
-              <div><span className="workflow-number">02</span><Layers3 size={22} /><strong>خيارات واضحة</strong></div>
-              <div><span className="workflow-number">03</span><Zap size={22} /><strong>نتيجة جاهزة</strong></div>
-            </div>
-          </div>
+      <section className="home-operating-strip">
+        <div className="shell">
+          <article><span>01</span><FileCheck2 size={20} /><div><strong>اختر الملف</strong><p>نتحقق من الصيغة والحجم قبل البدء.</p></div></article>
+          <article><span>02</span><Gauge size={20} /><div><strong>اضبط الضروري</strong><p>خيارات مرتبطة بالأداة فقط.</p></div></article>
+          <article><span>03</span><Zap size={20} /><div><strong>نزّل النتيجة</strong><p>ملف جديد دون تغيير الأصل.</p></div></article>
+          <article className="operating-security"><LockKeyhole size={20} /><div><strong>خصوصية واضحة</strong><p>لا أرشفة دائمة ولا حاجة إلى حساب.</p></div><Link href="/security">الأمان <ArrowLeft size={14} /></Link></article>
         </div>
       </section>
 
-      <section className="smart-showcase shell" data-reveal>
-        <figure><img src="/images/siaq-smart-workspace.webp" alt="مستند ممسوح يتحول إلى طبقات نص منظمة" loading="lazy" decoding="async" /></figure>
-        <div><span className="eyebrow"><span className="eyebrow-line" /> أدوات ذكية</span><h2>حوّل الصورة<br />إلى معرفة.</h2><p>استخرج النصوص والجداول من الملفات الممسوحة، ولخّص المستندات الطويلة من مساحة بسيطة تبقي النتيجة في الواجهة.</p><div className="smart-links"><Link href="/tool/ocr-pdf"><ScanText size={18} /> OCR للمستندات <ArrowLeft size={16} /></Link><Link href="/tool/summarize-pdf"><WandSparkles size={18} /> تلخيص PDF <ArrowLeft size={16} /></Link></div></div>
-      </section>
-
-      <section className="platform-section shell" data-reveal>
-        <div className="platform-main"><span className="eyebrow"><span className="eyebrow-line" /> خصوصية مفهومة</span><h2>الثقة تظهر<br />في كل خطوة.</h2><p>نتحقق من نوع الملف وحجمه قبل بدء العمل، وتبقى المعالجة مؤقتة مع إنشاء نتيجة جديدة دون الكتابة فوق ملفك الأصلي.</p><div className="platform-points"><span><LockKeyhole size={18} /> اتصال مشفّر</span><span><ShieldCheck size={18} /> ملفات مؤقتة</span><span><FileCheck2 size={18} /> تحقق قبل البدء</span></div><Link href="/security">مركز الأمان <ArrowLeft size={17} /></Link></div>
-        <figure className="security-image"><img src="/images/siaq-security-vault.webp" alt="مستندات محمية داخل درع شفاف متعدد الطبقات" loading="lazy" decoding="async" /></figure>
-        <div className="platform-stats"><div><strong>100</strong><span>أداة ومسارًا</span></div><div><strong>6</strong><span>أقسام واضحة</span></div><div><strong>30MB</strong><span>لكل ملف حاليًا</span></div><div><strong>RTL</strong><span>عربي من البداية</span></div></div>
-      </section>
-
-      <section className="solution-gallery shell" data-reveal>
-        <div className="section-head rich-head"><div><span className="eyebrow"><span className="eyebrow-line" /> سياق في كل مكان</span><h2>اختر طريقة العمل.</h2></div><p>من مهمة سريعة على الهاتف إلى دفعة مستندات تحتاج خطوات مرتبة.</p></div>
-        <div>
-          <Link href="/tools/office"><figure><img src="/images/siaq-batch-processing.webp" alt="ملفات Word وExcel وPowerPoint في مساحة منظمة" loading="lazy" decoding="async" /></figure><span>30 مسارًا للمستندات والجداول</span><h3>كل أدوات أوفيس</h3><ArrowUpLeft size={18} /></Link>
-          <Link href="/tools/image"><figure><img src="/images/siaq-mobile-accessibility.webp" alt="تحويل الصور من الهاتف والكمبيوتر" loading="lazy" decoding="async" /></figure><span>27 أداة لأشهر صيغ الصور</span><h3>معالجة الصور</h3><ArrowUpLeft size={18} /></Link>
-          <Link href="/workflows"><figure><img src="/images/siaq-integrations-network.webp" alt="خطوات مترابطة لمعالجة الملفات" loading="lazy" decoding="async" /></figure><span>مهام متعددة بخطوات واضحة</span><h3>مسارات العمل</h3><ArrowUpLeft size={18} /></Link>
+      <section className="home-lower-grid shell">
+        <div className="home-insight-card">
+          <span className="eyebrow"><span className="eyebrow-line" /> منصة عملية</span>
+          <h2>المعلومة المهمة<br />تبقى بجوار المهمة.</h2>
+          <p>نعرض الصيغ المقبولة، حدود الحجم، حالة الأداة، والإعدادات المطلوبة في مساحة واحدة حتى لا تتنقل بين شاشات إضافية.</p>
+          <div><span><strong>{tools.length}</strong> أداة</span><span><strong>30MB</strong> لكل ملف</span><span><strong>12</strong> ملفًا دفعة واحدة</span></div>
+          <Link href="/about">عن سياق <ArrowLeft size={15} /></Link>
+        </div>
+        <div className="home-articles">
+          <header><div><span className="eyebrow"><span className="eyebrow-line" /> دليل الملفات</span><h2>اقرأ ما تحتاجه فقط.</h2></div><Link href="/blog">كل المقالات <ArrowLeft size={15} /></Link></header>
+          <div>{articles.map((post) => <Link href={`/blog/${post.slug}`} key={post.slug}><div><span>{post.category}</span><small>{post.readTime}</small></div><h3>{post.title}</h3><p>{post.excerpt}</p><ArrowUpLeft size={16} /></Link>)}</div>
         </div>
       </section>
 
-      <section className="knowledge-section shell" data-reveal>
-        <figure><img src="/images/siaq-knowledge-hub.webp" alt="مركز معرفة يضم أدلة ومجلدات مرتبطة" loading="lazy" decoding="async" /></figure>
-        <div className="knowledge-content">
-          <div className="section-head rich-head"><div><span className="eyebrow"><span className="eyebrow-line" /> تعلّم أسرع</span><h2>دليل ملفاتك.</h2></div><Link href="/blog">كل المقالات <ArrowLeft size={17} /></Link></div>
-          <div className="home-posts">{articles.map((post, index) => <Link href={`/blog/${post.slug}`} key={post.slug} className={index === 0 ? "home-post featured" : "home-post"}><div><span>{post.category}</span><small>{post.readTime}</small></div><h3>{post.title}</h3><p>{post.excerpt}</p><ArrowUpLeft size={18} /></Link>)}</div>
-        </div>
+      <section className="compact-faq shell" aria-labelledby="faq-title">
+        <div><span className="eyebrow"><span className="eyebrow-line" /> إجابات سريعة</span><h2 id="faq-title">قبل رفع الملف.</h2><p>أهم ما تحتاج معرفته عن الاستخدام والخصوصية.</p></div>
+        <div>{faq.map((item) => <details key={item.question}><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div>
       </section>
 
-      <section className="home-faq shell" data-reveal>
-        <div><span className="eyebrow"><span className="eyebrow-line" /> أسئلة واضحة</span><h2>قبل أن تبدأ.</h2><p>إجابات مختصرة عن الملفات والخصوصية والتوافق.</p><Link href="/help">مركز المساعدة <ArrowLeft size={16} /></Link></div>
-        <div className="faq-list">
-          <details><summary>هل تبقى ملفاتي بعد انتهاء المهمة؟ <PlusIcon /></summary><p>لا تُستخدم الملفات كأرشيف دائم، وتُحذف مساحة العمل المؤقتة بعد اكتمال الاستجابة.</p></details>
-          <details><summary>هل تعمل الأدوات على الهاتف؟ <PlusIcon /></summary><p>نعم، الواجهة متجاوبة بالكامل وأزرار الرفع والإعدادات محسنة للمس والشاشات الصغيرة.</p></details>
-          <details><summary>ما الصيغ التي يدعمها سياق؟ <PlusIcon /></summary><p>PDF وWord وExcel وPowerPoint وJPG وPNG وWebP وصيغ أخرى موضحة داخل كل أداة.</p></details>
-        </div>
-      </section>
-
-      <section className="deep-cta shell" data-reveal><div><Sparkles size={23} /><span>ابدأ من النتيجة التي تريدها.</span></div><h2>ملف واحد.<br />خطوة تالية واضحة.</h2><Link href="#tools">اختر أداتك <ArrowLeft size={18} /></Link></section>
       <SiteFooter />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     </main>
   );
 }
-
-function PlusIcon() { return <span aria-hidden="true">+</span>; }

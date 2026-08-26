@@ -8,7 +8,7 @@ import { ToolGlyph } from "@/components/tool-glyph";
 import { availableToolSlugs, categories, categoryDescriptions, categoryLabels, tools, type ToolCategory } from "@/lib/content";
 
 export function generateStaticParams() { return categories.map((category) => ({ category })); }
-export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> { const category = (await params).category as ToolCategory; return categories.includes(category) ? { title: categoryLabels[category], description: categoryDescriptions[category] } : {}; }
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> { const category = (await params).category as ToolCategory; return categories.includes(category) ? { title: categoryLabels[category], description: categoryDescriptions[category], alternates: { canonical: `/tools/${category}` } } : {}; }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const category = (await params).category as ToolCategory; if (!categories.includes(category)) notFound();

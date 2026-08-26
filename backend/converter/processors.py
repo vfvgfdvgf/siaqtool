@@ -7,6 +7,7 @@ from .image_tools import IMAGE_PROCESSORS
 from .office_tools import OFFICE_PROCESSORS
 from .pdf_tools import PDF_PROCESSORS
 from .utility_tools import UTILITY_PROCESSORS
+from .data_tools import DATA_PROCESSORS
 
 
 PROCESSORS = {
@@ -14,6 +15,7 @@ PROCESSORS = {
     **OFFICE_PROCESSORS,
     **IMAGE_PROCESSORS,
     **UTILITY_PROCESSORS,
+    **DATA_PROCESSORS,
 }
 SUPPORTED_TOOLS = frozenset(PROCESSORS)
 

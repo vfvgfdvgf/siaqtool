@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Clock3, UserRound } from "lucide-react";
@@ -9,7 +10,7 @@ import { getPost, posts } from "@/lib/blog";
 export function generateStaticParams() { return posts.map((post) => ({ slug: post.slug })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const post = await getPost((await params).slug);
-  return post ? { title: post.metaTitle || post.title, description: post.metaDescription || post.excerpt } : {};
+  return post ? { title: post.metaTitle || post.title, description: post.metaDescription || post.excerpt, alternates: { canonical: `/blog/${post.slug}` } } : {};
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,7 +25,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <span className="eyebrow">{post.category}</span><h1>{post.title}</h1><p>{post.excerpt}</p>
           <div><time>{post.date}</time><span><Clock3 size={14} /> {post.readTime}</span><span><UserRound size={14} /> {post.author || "فريق سياق"}</span></div>
         </header>
-        {post.coverImage && <figure className="article-cover" data-reveal><img src={post.coverImage} alt={post.coverAlt || post.title} fetchPriority="high" /></figure>}
+        {post.coverImage && <figure className="article-cover" data-reveal><Image src={post.coverImage} alt={post.coverAlt || post.title} width={1500} height={844} priority sizes="(max-width: 1080px) 100vw, 1040px" /></figure>}
         {post.bodyHtml ? (
           <div className="article-body rich-article-body" data-reveal dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
         ) : (

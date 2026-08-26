@@ -50,6 +50,19 @@ const pdfTools: Tool[] = [
   { slug: "flatten-pdf", title: "تسطيح PDF", short: "ثبّت التعليقات والطبقات في صفحات مسطحة.", category: "pdf", accept: ".pdf" },
   { slug: "remove-pdf-metadata", title: "حذف بيانات PDF", short: "أزل العنوان والمؤلف وخصائص الملف الداخلية.", category: "pdf", accept: ".pdf" },
   { slug: "add-blank-pdf-page", title: "إضافة صفحة فارغة", short: "أضف صفحة بيضاء في نهاية مستند PDF.", category: "pdf", accept: ".pdf" },
+  { slug: "extract-text-pdf", title: "استخراج نص PDF", short: "استخرج نص كل صفحة إلى ملف TXT مرتب.", category: "pdf", accept: ".pdf" },
+  { slug: "pdf-info", title: "معلومات PDF", short: "اعرض عدد الصفحات والمقاسات والبيانات الوصفية.", category: "pdf", accept: ".pdf" },
+  { slug: "pdf-to-json", title: "PDF إلى JSON", short: "صدّر نص الصفحات وأبعادها كبيانات منظمة.", category: "pdf", accept: ".pdf" },
+  { slug: "extract-images-pdf", title: "استخراج صور PDF", short: "استخرج الصور الأصلية المضمنة داخل المستند.", category: "pdf", accept: ".pdf" },
+  { slug: "odd-pages-pdf", title: "استخراج الصفحات الفردية", short: "أنشئ PDF جديدًا من الصفحات الفردية فقط.", category: "pdf", accept: ".pdf" },
+  { slug: "even-pages-pdf", title: "استخراج الصفحات الزوجية", short: "أنشئ PDF جديدًا من الصفحات الزوجية فقط.", category: "pdf", accept: ".pdf" },
+  { slug: "first-page-pdf", title: "استخراج الصفحة الأولى", short: "حوّل أول صفحة إلى ملف PDF مستقل.", category: "pdf", accept: ".pdf" },
+  { slug: "last-page-pdf", title: "استخراج الصفحة الأخيرة", short: "حوّل آخر صفحة إلى ملف PDF مستقل.", category: "pdf", accept: ".pdf" },
+  { slug: "interleave-pdf", title: "تداخل ملفات PDF", short: "ادمج صفحات ملفين بالتناوب صفحة بعد صفحة.", category: "pdf", accept: ".pdf", multiple: true, minFiles: 2 },
+  { slug: "remove-blank-pages", title: "حذف الصفحات الفارغة", short: "اكتشف الصفحات الخالية واحذفها تلقائيًا.", category: "pdf", accept: ".pdf" },
+  { slug: "add-page-border", title: "إطار صفحات PDF", short: "أضف إطارًا نظيفًا حول محتوى كل صفحة.", category: "pdf", accept: ".pdf" },
+  { slug: "resize-pdf-a4", title: "تحويل صفحات PDF إلى A4", short: "وحّد مقاسات الصفحات إلى A4 مع حفظ التناسب.", category: "pdf", accept: ".pdf" },
+  { slug: "two-up-pdf", title: "صفحتان في ورقة", short: "رتّب صفحتين جنبًا إلى جنب في ورقة واحدة.", category: "pdf", accept: ".pdf" },
 ];
 
 const officeTools: Tool[] = [
@@ -83,6 +96,16 @@ const officeTools: Tool[] = [
   { slug: "excel-to-csv", title: "Excel إلى CSV", short: "صدّر أول ورقة من المصنف كبيانات CSV.", category: "office", accept: ".xls,.xlsx" },
   { slug: "text-to-word", title: "نص إلى Word", short: "حوّل TXT إلى مستند DOCX منسق.", category: "office", accept: ".txt" },
   { slug: "word-to-text", title: "Word إلى نص", short: "استخرج محتوى DOC وDOCX إلى TXT.", category: "office", accept: ".doc,.docx" },
+  { slug: "json-to-excel", title: "JSON إلى Excel", short: "حوّل السجلات المنظمة إلى مصنف XLSX.", category: "office", accept: ".json" },
+  { slug: "excel-to-json", title: "Excel إلى JSON", short: "صدّر أوراق المصنف وسجلاتها بصيغة JSON.", category: "office", accept: ".xls,.xlsx" },
+  { slug: "merge-csv", title: "دمج ملفات CSV", short: "اجمع عدة جداول مع توحيد أسماء الأعمدة.", category: "office", accept: ".csv", multiple: true, minFiles: 2 },
+  { slug: "split-csv", title: "تقسيم CSV", short: "قسّم الجدول الكبير إلى ملفات أصغر داخل ZIP.", category: "office", accept: ".csv" },
+  { slug: "deduplicate-csv", title: "حذف التكرار من CSV", short: "احذف الصفوف المتطابقة مع إبقاء أول نسخة.", category: "office", accept: ".csv" },
+  { slug: "csv-summary", title: "ملخص CSV", short: "احسب الصفوف والأعمدة والخلايا الفارغة فورًا.", category: "office", accept: ".csv" },
+  { slug: "markdown-to-docx", title: "Markdown إلى Word", short: "حوّل العناوين والقوائم إلى مستند DOCX.", category: "office", accept: ".md,.markdown,.txt" },
+  { slug: "docx-to-html", title: "Word إلى HTML", short: "حوّل DOC أو DOCX إلى صفحة HTML قابلة للنشر.", category: "office", accept: ".doc,.docx" },
+  { slug: "xlsx-to-html", title: "Excel إلى HTML", short: "حوّل جدول Excel إلى صفحة HTML.", category: "office", accept: ".xls,.xlsx" },
+  { slug: "powerpoint-to-images", title: "PowerPoint إلى صور", short: "صدّر كل شريحة كصورة PNG عالية الوضوح.", category: "office", accept: ".ppt,.pptx" },
 ];
 
 const imageTools: Tool[] = [
@@ -113,6 +136,24 @@ const imageTools: Tool[] = [
   { slug: "avif-to-jpg", title: "AVIF إلى JPG", short: "حوّل AVIF الحديث إلى JPG متوافق.", category: "image", accept: ".avif", multiple: true },
   { slug: "png-to-ico", title: "PNG إلى ICO", short: "أنشئ أيقونة متعددة الأحجام من PNG.", category: "image", accept: ".png" },
   { slug: "jpg-to-ico", title: "JPG إلى ICO", short: "حوّل صورة JPG إلى أيقونة ICO.", category: "image", accept: ".jpg,.jpeg" },
+  { slug: "invert-image", title: "عكس ألوان الصورة", short: "اعكس درجات الألوان لإنشاء تأثير سلبي واضح.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "sepia-image", title: "تأثير سيبيا", short: "حوّل الصورة إلى درجات دافئة كلاسيكية.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "auto-contrast-image", title: "تباين تلقائي", short: "وازن المجال اللوني وحسّن وضوح الصورة تلقائيًا.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "equalize-image", title: "موازنة إضاءة الصورة", short: "وزّع درجات الإضاءة لإظهار تفاصيل أكثر.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "brightness-image", title: "زيادة سطوع الصورة", short: "ارفع سطوع الصورة بدرجة متوازنة.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "contrast-image", title: "تحسين تباين الصورة", short: "قوِّ الفرق بين المناطق الفاتحة والداكنة.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "posterize-image", title: "تبسيط ألوان الصورة", short: "قلّل عدد الدرجات اللونية لتأثير رسومي.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "image-border", title: "إضافة إطار للصورة", short: "أضف هامشًا أبيض متساويًا حول الصورة.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "square-image", title: "تحويل الصورة إلى مربعة", short: "أضف هوامش ذكية دون قص المحتوى.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true },
+  { slug: "image-palette", title: "استخراج ألوان الصورة", short: "استخرج لوحة الألوان الأساسية ونسبها.", category: "image", accept: ".jpg,.jpeg,.png,.webp" },
+  { slug: "compare-images", title: "مقارنة صورتين", short: "أنشئ صورة توضّح الفروقات بين نسختين.", category: "image", accept: ".jpg,.jpeg,.png,.webp", multiple: true, minFiles: 2 },
+  { slug: "png-to-bmp", title: "PNG إلى BMP", short: "حوّل PNG إلى صيغة BMP النقطية.", category: "image", accept: ".png", multiple: true },
+  { slug: "bmp-to-png", title: "BMP إلى PNG", short: "حوّل BMP إلى PNG أخف للويب.", category: "image", accept: ".bmp", multiple: true },
+  { slug: "tiff-to-png", title: "TIFF إلى PNG", short: "حوّل صور TIFF إلى PNG عالي الجودة.", category: "image", accept: ".tif,.tiff", multiple: true },
+  { slug: "gif-to-png", title: "GIF إلى PNG", short: "استخرج الإطار الأول بصيغة PNG.", category: "image", accept: ".gif", multiple: true },
+  { slug: "avif-to-png", title: "AVIF إلى PNG", short: "حوّل AVIF إلى PNG واسع التوافق.", category: "image", accept: ".avif", multiple: true },
+  { slug: "ico-to-png", title: "ICO إلى PNG", short: "حوّل الأيقونات إلى صور PNG واضحة.", category: "image", accept: ".ico", multiple: true },
+  { slug: "heic-to-webp", title: "HEIC إلى WebP", short: "حوّل صور iPhone إلى WebP محسّن للويب.", category: "image", accept: ".heic,.heif", multiple: true },
 ];
 
 const convertTools: Tool[] = [
@@ -126,6 +167,11 @@ const convertTools: Tool[] = [
   { slug: "zip-files", title: "إنشاء ZIP", short: "اجمع حتى 12 ملفًا في حزمة ZIP واحدة.", category: "convert", accept: ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.txt,.csv", multiple: true, minFiles: 2 },
   { slug: "unzip-files", title: "فك ZIP", short: "استخرج محتويات ZIP الآمنة إلى حزمة جديدة.", category: "convert", accept: ".zip" },
   { slug: "file-hash", title: "بصمة الملف", short: "أنشئ بصمات SHA-256 للتحقق من سلامة الملفات.", category: "convert", accept: ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.zip,.txt,.csv", multiple: true },
+  { slug: "csv-to-json", title: "CSV إلى JSON", short: "حوّل الصفوف إلى بيانات JSON منظمة.", category: "convert", accept: ".csv" },
+  { slug: "json-to-csv", title: "JSON إلى CSV", short: "حوّل قائمة السجلات إلى جدول CSV.", category: "convert", accept: ".json" },
+  { slug: "csv-to-tsv", title: "CSV إلى TSV", short: "حوّل الفواصل إلى أعمدة مفصولة بعلامات تبويب.", category: "convert", accept: ".csv" },
+  { slug: "tsv-to-csv", title: "TSV إلى CSV", short: "حوّل البيانات المفصولة بعلامات تبويب إلى CSV.", category: "convert", accept: ".tsv" },
+  { slug: "text-to-pdf", title: "نص إلى PDF", short: "حوّل TXT إلى مستند PDF جاهز للمشاركة.", category: "convert", accept: ".txt" },
 ];
 
 const editTools: Tool[] = [

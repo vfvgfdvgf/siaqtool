@@ -31,6 +31,6 @@ test("renders final site metadata without a development preview marker", async (
   );
   const html = await response.text();
   assert.doesNotMatch(html, developmentPreviewMeta);
-  assert.match(html, /<title>سياق — 100 أداة لتحويل وتعديل الملفات<\/title>/);
-  assert.match(html, /<meta name="description" content="منصة عربية تضم أدوات PDF/);
+  assert.match(html, /<title>سياق — 146 أداة لتحويل وتعديل الملفات<\/title>/);
+  assert.match(html, /<meta name="description" content="منصة عربية تضم 146 أداة فعلية/);
 });

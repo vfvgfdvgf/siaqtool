@@ -22,7 +22,9 @@ _allow(
     "delete-pdf-pages extract-pdf-pages reorder-pdf-pages reverse-pdf-pages duplicate-pdf-pages grayscale-pdf "
     "flatten-pdf remove-pdf-metadata add-blank-pdf-page pdf-to-word pdf-to-excel pdf-to-powerpoint pdf-to-jpg "
     "pdf-to-png pdf-to-markdown edit-pdf sign-pdf watermark unlock-pdf protect-pdf redact-pdf pdf-forms "
-    "add-header-footer stamp-pdf compare-pdf ocr-pdf extract-tables-pdf summarize-pdf",
+    "add-header-footer stamp-pdf compare-pdf ocr-pdf extract-tables-pdf summarize-pdf extract-text-pdf pdf-info "
+    "pdf-to-json extract-images-pdf odd-pages-pdf even-pages-pdf first-page-pdf last-page-pdf interleave-pdf "
+    "remove-blank-pages add-page-border resize-pdf-a4 two-up-pdf",
     "pdf",
 )
 _allow("word-to-pdf word-to-excel word-to-powerpoint word-to-text", "doc docx")
@@ -54,11 +56,28 @@ _allow("bmp-to-jpg", "bmp")
 _allow("tiff-to-jpg", "tif tiff")
 _allow("gif-to-jpg", "gif")
 _allow("avif-to-jpg", "avif")
+_allow("png-to-bmp", "png")
+_allow("bmp-to-png", "bmp")
+_allow("tiff-to-png", "tif tiff")
+_allow("gif-to-png", "gif")
+_allow("avif-to-png", "avif")
+_allow("ico-to-png", "ico")
+_allow("heic-to-webp", "heic heif")
+_allow("invert-image sepia-image auto-contrast-image equalize-image brightness-image contrast-image posterize-image image-border square-image image-palette", "jpg jpeg png webp")
+_allow("compare-images", "jpg jpeg png webp")
 _allow("jpg-to-pdf scan-to-pdf", "jpg jpeg png webp heic heif")
 _allow("html-to-pdf", "html htm")
 _allow("markdown-to-pdf", "md markdown txt")
 _allow("zip-files file-hash", "pdf doc docx xls xlsx ppt pptx jpg jpeg png zip txt csv")
 _allow("unzip-files", "zip")
+_allow("csv-to-json csv-to-tsv merge-csv split-csv deduplicate-csv csv-summary", "csv")
+_allow("tsv-to-csv", "tsv")
+_allow("json-to-csv json-to-excel", "json")
+_allow("excel-to-json xlsx-to-html", "xls xlsx")
+_allow("text-to-pdf", "txt")
+_allow("markdown-to-docx", "md markdown txt")
+_allow("docx-to-html", "doc docx")
+_allow("powerpoint-to-images", "ppt pptx")
 
 
 class UploadRejected(ValueError):
@@ -91,7 +110,7 @@ def _signature_matches(path: Path, extension: str) -> bool:
         return head.startswith(b"\x00\x00\x01\x00")
     if extension in {".heic", ".heif", ".avif"}:
         return len(head) > 12 and head[4:8] == b"ftyp"
-    if extension in {".txt", ".csv", ".md", ".markdown", ".html", ".htm", ".svg"}:
+    if extension in {".txt", ".csv", ".tsv", ".json", ".md", ".markdown", ".html", ".htm", ".svg"}:
         if b"\x00" in head:
             return False
         try:
