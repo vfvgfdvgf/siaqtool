@@ -2,8 +2,8 @@ from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 def validate_image_reference(value: str) -> None:

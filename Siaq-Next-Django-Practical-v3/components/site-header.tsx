@@ -22,6 +22,15 @@ const exploreNav = [
   { href: "/help", label: "مركز المساعدة" },
 ];
 
+const popularTools = [
+  { href: "/tool/merge-pdf", label: "دمج PDF" },
+  { href: "/tool/compress-pdf", label: "ضغط PDF" },
+  { href: "/tool/pdf-to-word", label: "PDF إلى Word" },
+  { href: "/tool/word-to-pdf", label: "Word إلى PDF" },
+  { href: "/tool/compress-image", label: "ضغط الصور" },
+  { href: "/tool/image-to-text", label: "استخراج النص" },
+];
+
 export function SiteHeader() {
   return (
     <header className="site-header apple-header">
@@ -43,6 +52,13 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      <nav className="popular-tools-bar" aria-label="الأدوات الأكثر استخدامًا">
+        <div className="shell">
+          <strong>الأكثر استخدامًا</strong>
+          {popularTools.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+          <Link href="/tools" className="popular-tools-all">كل الأدوات <ArrowLeft size={13} /></Link>
+        </div>
+      </nav>
     </header>
   );
 }

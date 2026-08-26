@@ -13,10 +13,9 @@ export function LegalPage({ eyebrow, title, intro, sections }: { eyebrow: string
         <Link href="/" className="back-link"><ArrowRight size={16} /> الرئيسية</Link>
         <header><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{intro}</p><span className="legal-date"><CalendarDays size={14} /> آخر تحديث: 26 أغسطس 2026</span></header>
         <div className="legal-body">{sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p></section>)}</div>
-        <aside>هذه صياغة أولية للنسخة التجريبية، وتحتاج مراجعة قانونية قبل الإطلاق التجاري.</aside>
+        <aside>لديك سؤال عن هذه الصفحة؟ <Link href="/contact">تواصل معنا</Link> وسنوضح لك ما تحتاجه.</aside>
       </article>
       <SiteFooter />
     </main>
   );
 }
-

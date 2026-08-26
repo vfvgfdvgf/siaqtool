@@ -35,14 +35,15 @@ async function readCssTree(directory) {
   return contents.join("\n");
 }
 
-test("keeps motion measured and respects reduced-motion preferences", async () => {
+test("keeps every page static without decorative motion", async () => {
   const css = await readCssTree(path.join(root, "dist"));
+  const layout = await readFile(path.join(root, "app", "layout.tsx"), "utf8");
 
-  assert.match(css, /motion-ready[^}]*data-reveal/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /transition-duration:\s*\.01ms\s*!important/);
-  assert.doesNotMatch(css, /\*,\s*\*::before,\s*\*::after\s*\{\s*animation:\s*none\s*!important/);
+  assert.match(css, /animation:\s*none\s*!important/);
+  assert.match(css, /transition:\s*none\s*!important/);
+  assert.match(css, /\[data-reveal\][^{]*\{[^}]*opacity:\s*1\s*!important/);
   assert.match(css, /scrollbar-width:\s*none/);
+  assert.doesNotMatch(layout, /MotionObserver/);
 });
 
 test("forwards progress semantics to the primitive", async () => {

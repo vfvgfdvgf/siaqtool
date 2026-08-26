@@ -53,6 +53,7 @@ SIAQ_API_INTERNAL_URL=http://127.0.0.1:8000/api/v1 npm run dev
 - افتح رابط خدمة `siaq-api` ثم أضف `/admin/`.
 - اسم المستخدم الافتراضي في Blueprint هو `admin`.
 - من قسم **المقالات** يمكنك إضافة مقال، صورة غلاف، قسم، تاريخ نشر، حالة النشر، ومعلومات SEO.
+- اترك خانة **الرابط المختصر** فارغة؛ سيُنشئها النظام تلقائيًا مع منع تكرار الروابط.
 - يمكن استخدام Markdown داخل المحتوى، مثل `##` للعناوين و`-` للقوائم.
 
 تتصل الواجهة بالمحرك عبر شبكة Render الداخلية؛ لذلك لا تحتاج إلى كتابة عنوان API داخل الكود أو كشف مفتاح سري. يضبط Blueprint مفتاح Django تلقائيًا.
@@ -63,7 +64,7 @@ SIAQ_API_INTERNAL_URL=http://127.0.0.1:8000/api/v1 npm run dev
 
 ```bash
 npm run build:render
-cd backend && python -m unittest discover -s tests
+cd backend && python manage.py test
 ```
 
 ## الأمان
