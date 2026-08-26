@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | لوحة سياق{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'blog/admin.css' %}">{% endblock %}
+
+{% block branding %}
+<div class="siaq-admin-brand">
+  <span class="siaq-admin-mark" aria-hidden="true"><i></i></span>
+  <div><h1 id="site-name"><a href="{% url 'admin:index' %}">سياق</a></h1><small>إدارة المقالات والمحتوى</small></div>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

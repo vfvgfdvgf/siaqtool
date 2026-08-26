@@ -1,0 +1,61 @@
+services:
+  - type: web
+    name: siaq-web
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile.frontend
+    dockerContext: .
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      - key: SIAQ_API_HOST
+        fromService:
+          type: web
+          name: siaq-api
+          property: host
+      - key: SIAQ_API_PORT
+        fromService:
+          type: web
+          name: siaq-api
+          property: port
+
+  - type: web
+    name: siaq-api
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    autoDeployTrigger: commit
+    healthCheckPath: /api/v1/health/
+    maxShutdownDelaySeconds: 120
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com,localhost,127.0.0.1
+      - key: DJANGO_RENDER_INTERNAL_HOST
+        fromService:
+          type: web
+          name: siaq-api
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: siaq-db
+          property: connectionString
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@getsiaq.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+
+databases:
+  - name: siaq-db
+    plan: free
+    region: frankfurt
+    databaseName: siaq
+    user: siaq
