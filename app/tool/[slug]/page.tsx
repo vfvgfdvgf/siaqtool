@@ -6,7 +6,11 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { UploadZone } from "@/components/upload-zone";
 import { ToolGlyph } from "@/components/tool-glyph";
+<<<<<<< HEAD
 import { availableToolSlugs, categoryLabels, getTool, tools } from "@/lib/content";
+=======
+import { categoryLabels, djangoToolSlugs, getTool, tools } from "@/lib/content";
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 
 export function generateStaticParams() { return tools.map((tool) => ({ slug: tool.slug })); }
 
@@ -21,7 +25,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   if (!tool) notFound();
   const related = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug).slice(0, 3);
   const formats = tool.accept.split(",").map((format) => format.replace(".", "").toUpperCase());
+<<<<<<< HEAD
   const isReady = availableToolSlugs.has(tool.slug);
+=======
+  const isReady = djangoToolSlugs.has(tool.slug);
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 
   return (
     <main>
@@ -29,6 +37,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <section className="tool-hero shell">
         <nav className="breadcrumb" aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link><ChevronLeft size={14} /><span>{categoryLabels[tool.category]}</span></nav>
         <div className="tool-heading">
+<<<<<<< HEAD
           <div><span className="eyebrow">{categoryLabels[tool.category]}</span><h1>{tool.title}</h1><p>{tool.short} اضبط الخيارات الضرورية فقط، وسيتولى سياق بقية الخطوات.</p></div>
           <span className={`tool-file-icon tone-${tool.category}`} aria-hidden="true"><ToolGlyph slug={tool.slug} size={34} /></span>
         </div>
@@ -36,6 +45,15 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           <UploadZone accept={tool.accept} multiple={tool.multiple} minFiles={tool.minFiles} toolTitle={tool.title} toolSlug={tool.slug} ready={isReady} />
           <aside className="tool-side-panel">
             <div><span className={isReady ? "side-status ready" : "side-status"}>{isReady ? "جاهزة الآن" : "قريبًا"}</span><small>حالة الأداة</small></div>
+=======
+          <div><span className="eyebrow">{categoryLabels[tool.category]}</span><h1>{tool.title}</h1><p>{tool.short} اضبط الخيارات الضرورية فقط، واترك الباقي لمحرك سياق.</p></div>
+          <span className={`tool-file-icon tone-${tool.category}`} aria-hidden="true"><ToolGlyph slug={tool.slug} size={34} /></span>
+        </div>
+        <div className="tool-workspace-layout">
+          <UploadZone accept={tool.accept} multiple={tool.multiple} minFiles={tool.minFiles} toolTitle={tool.title} toolSlug={tool.slug} engineReady={isReady} />
+          <aside className="tool-side-panel">
+            <div><span className={isReady ? "side-status ready" : "side-status"}>{isReady ? "المحرك مجهّز" : "قيد التفعيل"}</span><small>حالة الأداة</small></div>
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
             <div><strong>الصيغ المقبولة</strong><div className="format-pills">{formats.map((format) => <span key={format}>{format}</span>)}</div></div>
             <div><strong>حدود المعالجة</strong><p>حتى 30 ميجابايت للملف، و12 ملفًا للأدوات المتعددة.</p></div>
             <Link href="/help">هل تحتاج مساعدة؟ <ArrowLeft size={15} /></Link>

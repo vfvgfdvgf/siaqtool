@@ -6,12 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+<<<<<<< HEAD
 type UploadZoneProps = { accept: string; multiple?: boolean; minFiles?: number; toolTitle: string; toolSlug: string; ready: boolean };
+=======
+type UploadZoneProps = { accept: string; multiple?: boolean; minFiles?: number; toolTitle: string; toolSlug: string; engineReady: boolean };
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 type JobStatus = "idle" | "processing" | "success" | "error";
 
 const DIRECT_API_BASE = process.env.NEXT_PUBLIC_SIAQ_API_URL?.replace(/\/$/, "");
 
+<<<<<<< HEAD
 export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, toolSlug, ready }: UploadZoneProps) {
+=======
+export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, toolSlug, engineReady }: UploadZoneProps) {
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -66,7 +74,11 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
   }
 
   async function processFiles() {
+<<<<<<< HEAD
     if (!ready) { setError("هذه الأداة قيد التجهيز وستتاح قريبًا."); return; }
+=======
+    if (!engineReady) { setError("هذه الأداة تحتاج محركًا متخصصًا وسيتم تفعيلها في الحزمة التالية."); return; }
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
     if (!files.length) { setError("اختر ملفًا أولًا."); return; }
     if (files.length < minFiles) { setError(`اختر ${minFiles} ملفات على الأقل لهذه الأداة.`); return; }
     if ((toolSlug === "protect-pdf" || toolSlug === "unlock-pdf") && password.length < 6) { setError("اكتب كلمة مرور من 6 أحرف على الأقل."); return; }
@@ -88,7 +100,11 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
       setDownloadName(match ? decodeURIComponent(match[1].replace(/"$/, "")) : `siaq-result-${Date.now()}`);
       setDownloadUrl(url); setStatus("success");
     } catch (reason) {
+<<<<<<< HEAD
       setStatus("error"); setError(reason instanceof Error && reason.message !== "Failed to fetch" ? reason.message : "تعذّر الاتصال بالخدمة الآن. حاول مرة أخرى بعد قليل.");
+=======
+      setStatus("error"); setError(reason instanceof Error && reason.message !== "Failed to fetch" ? reason.message : "محرك التحويل غير متصل الآن. الواجهة جاهزة وسيعمل الزر فور تشغيل خدمة API.");
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
     }
   }
 
@@ -101,7 +117,11 @@ export function UploadZone({ accept, multiple = false, minFiles = 1, toolTitle, 
 
   return (
     <div className="upload-workspace">
+<<<<<<< HEAD
       <div className={`engine-status ${ready ? "ready" : "queued"}`}><span>{ready ? "جاهزة للاستخدام" : "قريبًا"}</span><small>{ready ? "معالجة آمنة ومؤقتة" : "نعمل على إتاحتها"}</small></div>
+=======
+      <div className={`engine-status ${engineReady ? "ready" : "queued"}`}><span>{engineReady ? "المعالجة مجهّزة" : "قيد التفعيل"}</span><small>{engineReady ? "محرك Django" : "محرك متخصص"}</small></div>
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
       <div className={`drop-zone ${dragging ? "dragging" : ""}`} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
         <input ref={inputRef} type="file" accept={accept} multiple={multiple} onChange={onInput} className="sr-only" />
         <div className="drop-icon"><FileUp size={29} /></div>

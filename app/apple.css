@@ -38,7 +38,13 @@
   --apple-radius: 28px;
 }
 
+<<<<<<< HEAD
 html { scroll-behavior: smooth; background: #fff; }
+=======
+html { scroll-behavior: auto !important; background: #fff; }
+*, *::before, *::after { animation: none !important; transition: none !important; }
+*:hover { transform: none !important; }
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 body { color: var(--ink); background: #fff; font-family: "Thmanyah Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-feature-settings: "kern" 1, "liga" 1; }
 button, input, textarea, select { font-family: inherit; }
 h1, h2, h3, h4, h5, h6, .brand-name { letter-spacing: 0 !important; }
@@ -341,6 +347,7 @@ img { max-width: 100%; }
   .catalog-intro h1, .guides-hero h1, .about-hero h1, .formats-hero h1, .access-hero h1, .changelog-hero h1, .help-hero h1 { font-size: 3.75rem; }
   .workflows-hero h1, .developers-hero h1, .solution-hero h1, .mobile-solution h1, .integration-hero h1, .status-hero h1 { font-size: 3.75rem; }
 }
+<<<<<<< HEAD
 
 /* Siaq Next — custom tool artwork, editorial banners, and measured motion */
 .tool-icon, .category-tool-icon, .tool-file-icon, .category-art > span, .hero-quick-tools a > span { overflow: hidden; }
@@ -476,3 +483,5 @@ img { max-width: 100%; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .motion-ready [data-reveal], .motion-ready [data-reveal].is-visible { opacity: 1; transform: none; }
 }
+=======
+>>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
