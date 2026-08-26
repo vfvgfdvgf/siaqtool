@@ -28,11 +28,7 @@ export const categoryDescriptions: Record<ToolCategory, string> = {
   image: "حوّل الصور واضغطها واقصصها وعدّلها مع دعم أشهر صيغ الهاتف والويب.",
   convert: "حوّل صفحات الويب والنصوص والحزم والصور إلى ملفات أسهل للاستخدام.",
   edit: "أضف العلامات والتوقيع والحماية ونقّح البيانات الحساسة في مستندات PDF.",
-<<<<<<< HEAD
   smart: "استخرج النص والجداول، ولخّص المستندات أو ترجمها بأدوات ذكية واضحة.",
-=======
-  smart: "استخرج النص والجداول، ولخّص المستندات أو ترجمها بمحركات متخصصة.",
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 };
 
 const pdfTools: Tool[] = [
@@ -160,8 +156,4 @@ export const popularTools = popularSlugs.map((slug) => tools.find((tool) => tool
 export function getTool(slug: string) { return tools.find((tool) => tool.slug === slug); }
 
 const specializedToolSlugs = new Set(["translate-pdf"]);
-<<<<<<< HEAD
 export const availableToolSlugs = new Set(tools.filter((tool) => !specializedToolSlugs.has(tool.slug)).map((tool) => tool.slug));
-=======
-export const djangoToolSlugs = new Set(tools.filter((tool) => !specializedToolSlugs.has(tool.slug)).map((tool) => tool.slug));
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40

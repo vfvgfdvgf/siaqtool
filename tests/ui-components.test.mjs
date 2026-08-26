@@ -14,11 +14,7 @@ const vite = await createServer({
   configFile: false,
   root,
   resolve: { alias: { "@": root } },
-<<<<<<< HEAD
   server: { middlewareMode: true, watch: null },
-=======
-  server: { middlewareMode: true },
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 });
 
 after(async () => {
@@ -39,7 +35,6 @@ async function readCssTree(directory) {
   return contents.join("\n");
 }
 
-<<<<<<< HEAD
 test("keeps motion measured and respects reduced-motion preferences", async () => {
   const css = await readCssTree(path.join(root, "dist"));
 
@@ -47,14 +42,6 @@ test("keeps motion measured and respects reduced-motion preferences", async () =
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /transition-duration:\s*\.01ms\s*!important/);
   assert.doesNotMatch(css, /\*,\s*\*::before,\s*\*::after\s*\{\s*animation:\s*none\s*!important/);
-=======
-test("globally disables decorative motion", async () => {
-  const css = await readCssTree(path.join(root, "dist"));
-
-  assert.match(css, /animation:\s*none\s*!important/);
-  assert.match(css, /transition:\s*none\s*!important/);
-  assert.match(css, /scroll-behavior:\s*auto\s*!important/);
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
   assert.match(css, /scrollbar-width:\s*none/);
 });
 

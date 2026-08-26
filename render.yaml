@@ -42,7 +42,6 @@ services:
           type: web
           name: siaq-api
           property: host
-<<<<<<< HEAD
       - key: DATABASE_URL
         fromDatabase:
           name: siaq-db
@@ -60,5 +59,3 @@ databases:
     region: frankfurt
     databaseName: siaq
     user: siaq
-=======
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40

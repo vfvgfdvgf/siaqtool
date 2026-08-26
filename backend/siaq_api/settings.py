@@ -1,11 +1,8 @@
 import os
 from pathlib import Path
 
-<<<<<<< HEAD
 import dj_database_url
 
-=======
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-key-change-before-production-7f8912a4c6d8e0b3")
 DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
@@ -15,7 +12,6 @@ for render_host_var in ("RENDER_EXTERNAL_HOSTNAME", "DJANGO_RENDER_INTERNAL_HOST
     if render_host and render_host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(render_host)
 
-<<<<<<< HEAD
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -76,24 +72,6 @@ STORAGES = {
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
-=======
-INSTALLED_APPS = ["corsheaders", "converter"]
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
-ROOT_URLCONF = "siaq_api.urls"
-TEMPLATES = []
-WSGI_APPLICATION = "siaq_api.wsgi.application"
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-USE_TZ = True
-TIME_ZONE = "Asia/Riyadh"
-
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.environ.get(
     "CORS_ALLOWED_ORIGINS",
     "http://localhost:3000,http://localhost:4173",
@@ -101,7 +79,6 @@ CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.environ.get(
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = ["accept", "content-type"]
 
-<<<<<<< HEAD
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
     "http://localhost:8000,http://127.0.0.1:8000",
@@ -112,8 +89,6 @@ if external_hostname:
     if external_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(external_origin)
 
-=======
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
 DATA_UPLOAD_MAX_MEMORY_SIZE = 70 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
@@ -126,7 +101,4 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 X_FRAME_OPTIONS = "DENY"
 CSRF_COOKIE_SECURE = not DEBUG
-<<<<<<< HEAD
 SESSION_COOKIE_SECURE = not DEBUG
-=======
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40

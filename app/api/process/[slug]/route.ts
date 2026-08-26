@@ -25,10 +25,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
     return new Response(upstream.body, { status: upstream.status, headers });
   } catch {
-<<<<<<< HEAD
     return Response.json({ ok: false, error: "تعذّر الاتصال بالخدمة الآن. حاول مرة أخرى بعد قليل." }, { status: 503, headers: { "cache-control": "no-store" } });
-=======
-    return Response.json({ ok: false, error: "محرك التحويل غير متصل الآن." }, { status: 503, headers: { "cache-control": "no-store" } });
->>>>>>> 7c02a53d332ebcf3c6c714e955d1d83dfd1aab40
   }
 }
