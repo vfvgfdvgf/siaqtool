@@ -1,0 +1,7 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, Focus, Languages, ShieldCheck } from "lucide-react";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+export const metadata: Metadata = { title: "عن سياق" };
+export default function AboutPage() { return <main><SiteHeader /><section className="about-hero shell"><span className="eyebrow"><span className="eyebrow-line" /> عن سياق</span><h1>الأداة الجيدة<br />تختفي خلف النتيجة.</h1><p>بدأ سياق من سؤال بسيط: لماذا تحتاج مهمة صغيرة على ملف إلى واجهة مزدحمة وشرح طويل؟</p></section><section className="about-principles shell"><article><Focus size={26} /><span>01</span><h2>المهمة أولًا</h2><p>نضع الأداة ومساحة الرفع قبل التسويق والخيارات الثانوية.</p></article><article><Languages size={26} /><span>02</span><h2>عربي من البداية</h2><p>ليست ترجمة لاحقة؛ الاتجاه والنص والمسافات مصممة للعربية.</p></article><article><ShieldCheck size={26} /><span>03</span><h2>الثقة قابلة للفهم</h2><p>نوضح حالة المحرك وحدود الملفات وما يحدث بعد الرفع.</p></article></section><section className="about-story"><div className="shell"><div><span>سياق / getsiaq.com</span><h2>منصة ملفات مستقلة بواجهة Next.js ومحرك Django.</h2></div><p>نبني الأدوات على مراحل قابلة للاختبار، ونفصل الواجهة عن المعالجة حتى يمكن توسيع المحرك وتأمينه دون تعقيد تجربة المستخدم.</p></div></section><section className="about-cta shell"><h2>ابدأ بما تريد إنجازه.</h2><Link href="/tools">كل الأدوات <ArrowLeft size={17} /></Link></section><SiteFooter /></main>; }

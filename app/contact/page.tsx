@@ -1,0 +1,7 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, Bug, HelpCircle, Lightbulb, Mail } from "lucide-react";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+export const metadata: Metadata = { title: "تواصل معنا" };
+export default function ContactPage() { return <main><SiteHeader /><section className="contact-page shell"><div className="simple-heading"><span className="eyebrow"><span className="eyebrow-line" /> تواصل معنا</span><h1>نقرأ التفاصيل.</h1><p>اختر نوع الرسالة وأرسل معلومات تساعدنا على فهمها، دون إرفاق ملفات حساسة.</p></div><div className="contact-grid"><a href="mailto:support@getsiaq.com?subject=مساعدة%20في%20سياق"><HelpCircle size={24} /><h2>مساعدة</h2><p>مشكلة في أداة أو نتيجة تحويل.</p><ArrowLeft size={17} /></a><a href="mailto:support@getsiaq.com?subject=بلاغ%20تقني"><Bug size={24} /><h2>بلاغ تقني</h2><p>خطأ أو صفحة لا تعمل كما ينبغي.</p><ArrowLeft size={17} /></a><a href="mailto:hello@getsiaq.com?subject=اقتراح%20لسياق"><Lightbulb size={24} /><h2>اقتراح</h2><p>أداة جديدة أو تحسين لتجربة الاستخدام.</p><ArrowLeft size={17} /></a></div><div className="contact-direct"><Mail size={21} /><div><strong>البريد المباشر</strong><span>support@getsiaq.com</span></div><a href="mailto:support@getsiaq.com">اكتب رسالة <ArrowLeft size={16} /></a></div><Link className="back-link" href="/help">العودة إلى مركز المساعدة</Link></section><SiteFooter /></main>; }
